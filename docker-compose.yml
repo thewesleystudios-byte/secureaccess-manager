@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: secureaccess-db
+    restart: always
+    environment:
+      POSTGRES_USER: secureuser
+      POSTGRES_PASSWORD: securepass
+      POSTGRES_DB: secureaccess_db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U secureuser -d secureaccess_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    image: secureaccess-backend
+    container_name: secureaccess-backend
+    build: ./backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/secureaccess_db
+      SPRING_DATASOURCE_USERNAME: secureuser
+      SPRING_DATASOURCE_PASSWORD: securepass
+      JWT_SECRET: mysuperduperultraSTRONGsupersecretkeywithlotsofcharacters1234567890ABCDEF
+      JWT_EXPIRATION: 86400000   # 24 hours
+    command: ["java",
+              "-Dspring.datasource.url=jdbc:postgresql://db:5432/secureaccess_db",
+              "-Dspring.datasource.username=secureuser",
+              "-Dspring.datasource.password=securepass",
+              "-jar", "app.jar"]
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  frontend:
+    image: secureaccess-frontend
+    container_name: secureaccess-frontend
+    build: ./frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

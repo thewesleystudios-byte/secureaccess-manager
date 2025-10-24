@@ -1,0 +1,25 @@
+# Java / Maven
+target/
+*.log
+*.iml
+*.class
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Node / Vite (frontend)
+node_modules/
+dist/
+*.local
+*.env.local
+vite.config.timestamp-*.mjs
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Docker
+*.pid
+*.tar
