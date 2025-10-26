@@ -6,3 +6,6 @@
 - CI on GitHub Actions builds and pushes GHCR image.
 - How to run: see `HOW_TO_RUN.md`.
 - Verify:
+
+## Release Status
+![Release](https://github.com/thewesleystudios-byte/secureaccess-manager/actions/workflows/release.yml/badge.svg)
